@@ -1,2 +1,48 @@
+LeetCode【24】【两两交换链表中的节点】：https://leetcode-cn.com/problems/swap-nodes-in-pairs/
+【递归法】
+class Solution {
+public:
+    ListNode* swapPairs(ListNode* head) {
+        if(!head || !head->next)
+        return head;
+        struct ListNode *newhead = head->next;
+        head->next = swapPairs(newhead->next);
+        newhead->next = head;
+        return newhead;
+    }
+};
+【迭代法】
+class Solution {
+public:
+    ListNode* swapPairs(ListNode* head) {
+        ListNode* dummyHead = new ListNode(0);
+        dummyHead->next = head;
+        ListNode* rear = dummyHead;
+        while(rear->next != nullptr && rear->next->next != nullptr ){
+            ListNode *node1 = rear->next;
+            ListNode *node2 = rear->next->next;
+            rear->next = node2;
+            node1->next = node2->next;
+            node2->next = node1;
+            rear = node1;
+        }
+        return dummyHead->next;
+    }
+};
 
+LeetCode【41】【缺失的第一个正数】：https://leetcode-cn.com/problems/first-missing-positive/
+class Solution {
+public:
+    int firstMissingPositive(vector<int>& nums) {
+        int n = nums.size();
+        for(int i = 0;i < n; i++){
+            while(nums[i]>0 && nums[i]<=n && nums[nums[i]-1] != nums[i])
+                swap(nums[i],nums[nums[i]-1]);
+        }
+        for(int i = 0;i < n; i++)
+            if(nums[i]!=i+1)
+                return i+1;
+        return n+1;
+    }
+};
 
