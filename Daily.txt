@@ -143,5 +143,52 @@ public:
     }
 };
 
+剑指offer【54】【二叉搜索树的第k大的节点】：https://leetcode-cn.com/problems/er-cha-sou-suo-shu-de-di-kda-jie-dian-lcof/
+public:
+    void NumofNode(TreeNode* root,int *n){
+        if(!root)
+            return;
+        (*n)++;
+        NumofNode(root->left,n);
+        NumofNode(root->right,n);
+        return; 
+    }
+    void midorder(TreeNode* root,int *arg,int* index){
+        if(!root)
+            return;
+        midorder(root->left,arg,index);
+        arg[*index] = root->val;
+        (*index)++;
+        midorder(root->right,arg,index);
+        return;
+    }
+    int kthLargest(TreeNode* root, int k) {
+        int n = 0;
+        NumofNode(root,&n);
+        int* arg = (int*)malloc(sizeof(int)*n);
+        int index = 0;
+        midorder(root,arg,&index);
+        return arg[n-k];
+    }
+};
+
+剑指offer【63】【股票的最大利润】：https://leetcode-cn.com/problems/gu-piao-de-zui-da-li-run-lcof/
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int n = prices.size();
+        if(!n)
+            return 0;
+        int buy = prices[0];
+        int Max = 0;
+        int* profit = (int*)malloc(sizeof(int)*n);
+        for(int i = 1; i < n; i++){
+            buy = prices[i]<buy?prices[i]:buy;
+            profit[i] = prices[i]-buy;
+            Max = Max < profit[i]?profit[i]:Max;
+        }
+        return Max;
+    }
+};
 
 
