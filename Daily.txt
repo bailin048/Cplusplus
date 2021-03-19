@@ -191,4 +191,69 @@ public:
     }
 };
 
+LeetCode【129】【求根节点到叶节点数字之和】：https://leetcode-cn.com/problems/sum-root-to-leaf-numbers/
+class Solution {
+public:
+    void NumofLeaf(TreeNode* root,int* count){
+        if(!root)
+            return;
+        if((!root->left) && (!root->right))
+            (*count)++;
+        NumofLeaf(root->left,count);
+        NumofLeaf(root->right,count);
+        return;
+    }
+    void helper(TreeNode* root,int* tmp,int* index, int num){
+        if(!root)
+            return;
+        if((!root->left) && (!root->right)){
+            tmp[(*index)] = num*10+root->val;
+            (*index)++;
+        }
+        num = num*10 + root->val;
+        helper(root->left,tmp,index,num);
+        helper(root->right,tmp,index,num);
+        return;
+    }
+    int sumNumbers(TreeNode* root) {
+        int count = 0;
+        NumofLeaf(root,&count);
+        int* tmp = (int*)malloc(sizeof(int)*count);
+        int index = 0;
+        helper(root,tmp,&index,0);
+        int sum = 0;
+        for(int  i = 0;i<index;i++)
+            sum+=tmp[i];
+        return sum;
+    }
+};
+
+LeetCode【222】【完全二叉树的节点个数】：https://leetcode-cn.com/problems/count-complete-tree-nodes/
+class Solution {
+public:
+    int countNodes(TreeNode* root) {
+        if(!root)
+            return 0;
+        return countNodes(root->left)+countNodes(root->right)+1;
+    }
+};
+
+LeetCode【543】【二叉树的直径】：https://leetcode-cn.com/problems/diameter-of-binary-tree/
+class Solution {
+public:
+    int helper(TreeNode* root,int& ans){
+        if(!root)
+            return 0;
+        int l = helper(root->left,ans);
+        int r = helper(root->right,ans);
+        ans = max(l + r, ans);
+        return max(l, r) + 1;
+    }
+    int diameterOfBinaryTree(TreeNode* root) {
+        int length = 0;
+        helper(root,length);
+        return length;
+    }
+};
+
 
