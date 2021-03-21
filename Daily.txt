@@ -533,3 +533,24 @@ int main(){
         cout<<D2-D1<<endl;
     }
 }
+
+LeetCode【230】【二叉搜索树中第K小的元素】：https://leetcode-cn.com/problems/kth-smallest-element-in-a-bst/
+class Solution {
+public:
+    void helper(TreeNode* root,int k,int* res,int* index){
+        if(!root)
+            return;
+        helper(root->left,k,res,index);
+        (*index)++;
+        if(*index == k)
+            *res = root->val;
+        helper(root->right,k,res,index);
+        return;
+    } 
+    int kthSmallest(TreeNode* root, int k) {
+        int res = INT_MIN;
+        int index = 0; 
+        helper(root,k,&res,&index);
+        return res;
+    }
+};
