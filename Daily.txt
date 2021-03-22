@@ -554,3 +554,67 @@ public:
         return res;
     }
 };
+
+LeetCode【671】【二叉树中第二小的节点】：https://leetcode-cn.com/problems/second-minimum-node-in-a-binary-tree/
+class Solution {
+public:
+    void helper(TreeNode* root,int* tmp,int* index){
+        if(!root)
+            return;
+        helper(root->left,tmp,index);
+        tmp[*index] = root->val;
+        (*index)++;
+        helper(root->right,tmp,index);
+    }
+    int findSecondMinimumValue(TreeNode* root) {
+        int* tmp = new int[25];
+        int index = 0;
+        int res = -1;
+        helper(root,tmp,&index);
+        int dk = index;
+        while(dk/=2){
+            for(int i = dk;i<index;i++){
+                if(tmp[i-dk]>tmp[i]){
+                    int n = tmp[i],j;
+                    for(j = i-dk;j>-1&&tmp[j]>n;j-=dk)
+                        tmp[j+dk] = tmp[j];
+                    tmp[j+dk] = n;
+                }
+            }
+        }
+        for(int i = 0;i<index;i++)
+            if(tmp[i]!=root->val){
+                res = tmp[i];
+                break;
+            }
+        delete []tmp;
+        return res;
+    }
+};
+
+LeetCode【108】【将有序数组转换为二叉搜索树】：https://leetcode-cn.com/problems/convert-sorted-array-to-binary-search-tree/
+class Solution {
+public:
+    TreeNode* helper(vector<int>& nums, int left, int right){
+        if(left>right)
+            return nullptr;
+        int mid = left + (right-left)/2;
+        TreeNode* root = new TreeNode(nums[mid]);
+        root->left = helper(nums, left, mid-1);
+        root->right = helper(nums, mid+1, right);
+        return root;
+    }
+    TreeNode* sortedArrayToBST(vector<int>& nums) {
+        return helper(nums, 0,nums.size()-1);
+    }
+};
+
+LeetCode【700】【二叉搜索树中的搜索】：https://leetcode-cn.com/problems/search-in-a-binary-search-tree/
+class Solution {
+public:
+    TreeNode* searchBST(TreeNode* root, int val) {
+        if(!root || root->val ==    val)
+            return root;
+        return  val < root->val ? searchBST(root->left, val) : searchBST(root->right, val);
+    }
+};
