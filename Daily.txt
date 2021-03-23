@@ -618,3 +618,49 @@ public:
         return  val < root->val ? searchBST(root->left, val) : searchBST(root->right, val);
     }
 };
+
+LeetCode【653】【两数之和IV-输入BST】：https://leetcode-cn.com/problems/two-sum-iv-input-is-a-bst/
+class Solution {
+public:
+    void helper(TreeNode* root,int* res,int* index){
+        if(!root)
+            return;
+        helper(root->left,res,index);
+        res[*index] = root->val;
+        (*index)++;
+        helper(root->right,res,index);
+    } 
+    bool findTarget(TreeNode* root, int k) {
+        int* res = new int[10000];
+        int index = 0;
+        helper(root,res,&index);
+        int left = 0,right = index - 1;
+        while(left<right){
+            if(res[left] + res[right] > k)
+                --right;
+            else if(res[left] + res[right] < k)
+                ++left;
+            else
+                return true;
+        }
+        return false;
+    }
+};
+
+LeetCode【563】【二叉树的坡度】：https://leetcode-cn.com/problems/binary-tree-tilt/
+class Solution {
+public:
+    int res = 0;
+    int helper(TreeNode* root){
+        if(!root)
+            return 0;
+        int left = helper(root->left);
+        int right = helper(root->right);
+        res += fabs(left-right);
+        return left + right + root->val;
+    } 
+    int findTilt(TreeNode* root) {
+        helper(root);
+        return res;
+    }
+};
