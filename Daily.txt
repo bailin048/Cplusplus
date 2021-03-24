@@ -664,3 +664,16 @@ public:
         return res;
     }
 };
+
+剑指offer【31】【栈的压入、弹出序列】：https://leetcode-cn.com/problems/zhan-de-ya-ru-dan-chu-xu-lie-lcof/
+bool validateStackSequences(int* pushed, int pushedSize, int* popped, int poppedSize){
+    int* stack = (int*)malloc(sizeof(int)*poppedSize);
+    int top = -1;
+    int index = 0;
+    for(int i = 0;i<pushedSize;i++){
+        stack[++top] = pushed[i];
+        while(top!=-1 && stack[top]==popped[index])
+            --top,++index;
+    }
+    return top == -1;
+}
