@@ -745,3 +745,45 @@ public:
         return -1;
     }
 };
+
+LeetCode【80】【删除排序数组中的重复项II】：https://leetcode-cn.com/problems/remove-duplicates-from-sorted-array-ii/
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) {
+        int n = nums.size();
+        if(n<2)
+            return n;
+        int j = 1,cnt = 1;
+        for(int i = 1;i<n;i++){
+            if(nums[i] == nums[i-1])
+                ++cnt;
+            else
+                cnt = 1;
+            if (cnt <= 2) {
+                nums[j++] = nums[i];
+            }
+        }
+        return j;
+    }
+};
+
+LeetCode【82】【删除排序链表的重复元素】：https://leetcode-cn.com/problems/remove-duplicates-from-sorted-list-ii/
+class Solution {
+public:
+    ListNode* deleteDuplicates(ListNode* head) {
+        if(!head || !head->next)
+            return head;
+        ListNode* tmp = new ListNode(0,head);
+        ListNode* cur = tmp;
+        while(cur->next && cur->next->next){
+            if(cur->next->val == cur->next->next->val){
+                int x = cur->next->val;
+                while(cur->next && cur->next->val == x)
+                    cur->next = cur->next->next;
+            }
+            else
+                cur = cur->next;
+        }
+        return tmp->next;
+    }
+};
