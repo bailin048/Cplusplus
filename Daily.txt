@@ -810,3 +810,189 @@ public:
         return nums;
     }
 };
+
+LeetCode【287】【寻找重复数】：https://leetcode-cn.com/problems/find-the-duplicate-number/
+class Solution {
+public:
+    int findDuplicate(vector<int>& nums) {
+        int numSize = nums.size();
+        int* cnt = new int[numSize-1];
+        int i = 0;
+        for(;i<numSize-1;i++)
+            cnt[i] = 0;
+        for(i = 0;i<numSize;i++){
+            if(cnt[nums[i]-1]==0)
+                cnt[nums[i]-1] = 1;
+            else
+                break;
+        }
+        delete[]cnt;
+        return nums[i];
+    }
+};
+
+LeetCode【92】【反转链表II】：https://leetcode-cn.com/problems/reverse-linked-list-ii/
+class Solution {
+public:
+    ListNode* reverseBetween(ListNode* head, int left, int right) {
+        if(!head->next || left == right)
+            return head;
+        ListNode* dummy = new ListNode(0,head);  
+        ListNode* pre = dummy;
+        int index = 0;
+        while(index!=left-1){//找到反转之前的节点
+            ++index;
+            pre = pre->next;
+        }
+        ListNode* end = pre->next;
+        ListNode* t = end->next;
+        ListNode* rear = t->next;
+        while(left<right){
+            t->next = pre->next;
+            end->next = rear;
+            pre->next = t;
+            t = rear;
+            if(rear)
+                rear = rear->next;
+            --right;
+        }
+        head = dummy->next;
+        delete dummy;
+        return  head;
+    }
+};
+
+LeetCode【61】【旋转链表】：https://leetcode-cn.com/problems/rotate-list/
+class Solution {
+public:
+    int helper(ListNode* head,ListNode*& connect){
+        int res = 0;
+        ListNode* tmp = head;
+        while(tmp){
+            ++res;
+            connect = tmp;
+            tmp = tmp->next;
+        }
+        return res;
+    }
+    ListNode* rotateRight(ListNode* head, int k) {
+        if(!head)
+            return head;
+        ListNode* connect = nullptr;
+        int size = helper(head,connect);
+        k %= size;
+        if(!k)
+            return head;
+        int cnt = 0;
+        ListNode* tail = head;
+        while(cnt!=size - k-1){
+            ++cnt;
+            tail = tail->next;
+        }
+        ListNode* newhead = tail->next;
+        tail->next = nullptr;
+        connect->next = head;
+        return newhead;
+    }
+};
+
+LeetCode【771】【宝石与石头】：https://leetcode-cn.com/problems/jewels-and-stones/
+class Solution {
+public:
+    int numJewelsInStones(string jewels, string stones) {
+        int sz1 = jewels.size();
+        int sz2 = stones.size();
+        int* flag = new int[128];
+        for(int i = 0;i<128;i++)
+            flag[i] = 0;
+        for(int i = 0;i<sz1;i++)
+            flag[jewels[i]] = 1;
+        for(int i = 0;i<sz2;i++)
+            if(flag[stones[i]]!=0)
+                flag[stones[i]]++;
+        int res = -sz1;
+        for(int i = 0;i<128;i++)
+            res+=flag[i];
+        return res;
+    }
+};
+
+LeetCode【796】【旋转字符串】：https://leetcode-cn.com/problems/rotate-string/
+class Solution {
+public:
+    bool rotateString(string A, string B) {
+        int sz1 = A.size(),sz2 = B.size();
+        if(sz1 != sz2)
+            return false;
+        if(!sz1)
+            return true;
+        return (B+B).find(A)!=-1;
+    }
+};
+
+LeetCode【345】【反转字符串中的原因字符】：https://leetcode-cn.com/problems/reverse-vowels-of-a-string/
+class Solution {
+public:
+    bool IsVowels(char& s){
+        if(s == 'a' || s == 'e' || s == 'i' || s == 'o' || s == 'u')
+            return true;
+        if(s == 'A' || s == 'E' || s == 'I' || s == 'O' || s == 'U')
+            return true;
+        return false;
+    }
+    string reverseVowels(string s) {
+        int n = s.size();
+        if(n<2)
+            return s;
+        int left = 0,right = n - 1;
+        while(left<right){
+            if(!IsVowels(s[left]))
+                ++left;
+            if(!IsVowels(s[right]))
+                --right;
+            if(IsVowels(s[left])&&IsVowels(s[right])){
+                char tmp = s[left];
+                s[left++] = s[right];
+                s[right--] = tmp;
+            }
+        }
+        return s;
+    }
+};
+
+LeetCode【86】【分隔链表】：https://leetcode-cn.com/problems/partition-list/
+class Solution {
+public:
+    ListNode* partition(ListNode* head, int x) {
+        if(!head || !head->next)
+            return head;
+        ListNode* dummy = new ListNode(-1,head);
+        ListNode* start = dummy;
+        while(start&&start->next&&start->next->val<x)//令pre指向第一个>=x的节点的前一个节点
+            start = start->next;
+        if(!start)
+            return dummy->next;
+        ListNode* target = start->next;
+        ListNode* prev = start;
+        ListNode* rear = start;
+        while(rear){
+            while(target&&target->val >= x){//向后寻找小于x的节点
+                prev = target;//小于x节点的前一节点
+                target = target->next;
+            }
+            if(!target)
+                break; 
+            if(target){//定位后续链表
+                rear = target->next;
+                prev->next = rear;
+                target->next = start->next;
+                start->next = target;
+                start = start->next;
+                target = rear;
+            }
+        }
+        head = dummy->next;
+        delete dummy;
+        return head;
+    }
+};
