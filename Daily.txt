@@ -996,3 +996,127 @@ public:
         return head;
     }
 };
+
+LeetCode【73】【矩阵置零】：https://leetcode-cn.com/problems/set-matrix-zeroes/
+class Solution {
+public:
+    void setZeroes(vector<vector<int>>& matrix) {
+        int m = matrix.size(),n = matrix[0].size();
+        int* row = new int[m];
+        int* col = new int[n];
+        for(int i = 0;i < m; i++){
+            for(int j = 0;j < n; j++)
+                if(!matrix[i][j]){
+                    row[i] = 1;
+                    col[j] = 1;
+                }
+        }
+        for(int  i = 0;i<m;i++)
+            if(row[i]==1){
+                for(int j = 0;j<n;j++)
+                    matrix[i][j] = 0;
+            }
+        for(int j = 0;j<n;j++)
+            if(col[j]==1){
+                for(int i = 0;i<m;i++)
+                    matrix[i][j]=0;
+            }
+        delete[]col;
+        delete[]row;
+    }
+};
+
+LeetCode【233】【数字1的个数】：https://leetcode-cn.com/problems/number-of-digit-one/
+class Solution {
+public:
+    int countDigitOne(int n) {
+        long digit = 1;
+        int high = n/10,low = 0,cur = n%10; 
+        int count = 0;
+        while(high||cur){
+            if(!cur)
+                count += high*digit;
+            else if(cur == 1)
+                count += high*digit+low+1;
+            else
+                count += (high+1)*digit;
+            low+=cur*digit;
+            cur = high%10;
+            high/=10;
+            digit*=10;
+        }
+        return count;
+    }
+};
+
+LeetCode【75】【颜色分类】：https://leetcode-cn.com/problems/sort-colors/
+class Solution {
+public:
+    void sortColors(vector<int>& nums) {
+        int* cnt = new int[3];
+        cnt[0]=cnt[1]=cnt[2]=0;
+        int n = nums.size();
+        for(int i = 0;i < n;i++)
+            cnt[nums[i]]++;
+        int i = 0,j = 0; 
+        while(i<3){
+            if(cnt[i]--)
+                nums[j++]=i;
+            else
+                i++;
+        }
+    }
+};
+
+LeetCode【274】【H指数】：https://leetcode-cn.com/problems/h-index/
+class Solution {
+public:
+    void AdjustDown(vector<int>& citations,int parent,int n){
+        int child = parent*2+1;
+        int tmp = citations[parent];
+        while(child<n){
+            if(child+1<n && citations[child+1]<citations[child])
+                ++child;
+            if(tmp<=citations[child])
+                break;
+            citations[parent] =citations[child];
+            parent = child;
+            child = parent*2+1;
+        }
+        citations[parent]=tmp;
+    }
+    void HeapSort(vector<int>& citations){
+        int n = citations.size();
+        int curpos = n/2-1;
+        while(curpos>=0){//建成最大堆
+            AdjustDown(citations,curpos,n);
+            curpos--;
+        }
+        for(int i = n - 1;i>0;i--){
+            int tmp = citations[0];
+            citations[0] = citations[i];
+            citations[i] = tmp;
+            AdjustDown(citations,0,i);
+        }
+    }
+    int hIndex(vector<int>& citations) {
+        int n = citations.size();
+        HeapSort(citations);
+        int i=0;
+        while (i < n && citations[i] > i) 
+            i++;
+        return i;
+    }
+};
+
+LeetCode【275】【H指数II】：https://leetcode-cn.com/problems/h-index-ii/
+class Solution {
+public:
+    int hIndex(vector<int>& citations) {
+        int n = citations.size();
+        int i=0;
+        while (i < n && citations[n-1-i] > i) 
+            i++;
+        return i;
+    }
+};
