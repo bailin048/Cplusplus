@@ -1120,3 +1120,74 @@ public:
         return i;
     }
 };
+
+LeetCode【12】【整数转罗马数字】：https://leetcode-cn.com/problems/integer-to-roman/
+class Solution {
+public:
+    string intToRoman(int num) {
+        string thousands[] = {"","M","MM","MMM"};
+        string hundreds[] = {"","C","CC","CCC","CD","D","DC","DCC","DCCC","CM"};
+        string tens[] = {"","X","XX","XXX","XL","L","LX","LXX","LXXX","XC"};
+        string ones[] = {"","I","II","III","IV","V","VI","VII","VIII","IX"};
+        int thousands_digit = num/1000;
+        int hundreds_digit = num/100%10;
+        int tens_digit = num/10%10;
+        int ones_digit = num%10;
+        return thousands[thousands_digit]+hundreds[hundreds_digit]+tens[tens_digit]+ones[ones_digit];
+    }
+};
+
+LeetCode【338】【比特位计数】：https://leetcode-cn.com/problems/counting-bits/submissions/
+class Solution {
+public:
+    vector<int> countBits(int num) {
+        vector<int> res(num+1);
+        res[0] = 0;
+        for(int i = 1;i<=num;++i){
+            if(i&1)
+                res[i]=res[i-1]+1;
+            else
+                res[i] = res[i>>1];
+        }
+        return res;
+    }
+};
+
+LeetCode【665】【非递减数列】：https://leetcode-cn.com/problems/non-decreasing-array/submissions/
+class Solution {
+public:
+    bool checkPossibility(vector<int>& nums) {
+       int n = nums.size();
+       int cnt = 0;
+       for(int i = 1;i<n;i++){
+            if(nums[i]<nums[i-1]){
+                if(i == 1 || nums[i]>=nums[i-2])
+                    nums[i-1] = nums[i];
+                else
+                    nums[i] = nums[i-1];
+                ++cnt;
+            }
+       }
+       return cnt<=1;
+    }
+};
+
+LeetCode【872】【叶子相似的树】：https://leetcode-cn.com/problems/leaf-similar-trees/submissions/
+class Solution {
+public:
+    void helper(vector<int>& leaf,TreeNode* root){
+        if(!root)
+            return;
+        if(!root->left&&!root->right)
+            leaf.push_back(root->val);
+        helper(leaf,root->left);
+        helper(leaf,root->right);
+    }
+    bool leafSimilar(TreeNode* root1, TreeNode* root2) {
+        vector<int> leaf1;
+        vector<int> leaf2;
+        helper(leaf1,root1);
+        helper(leaf2,root2);
+        return leaf1==leaf2;
+    }
+};
