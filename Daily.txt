@@ -1329,4 +1329,103 @@ private:
     int m_size;
 };
 
+【1161】【最大层内元素和】：https://leetcode-cn.com/problems/maximum-level-sum-of-a-binary-tree/submissions/
+class Solution {
+public:
+    int maxLevelSum(TreeNode* root) {
+        queue<TreeNode*> Q;
+        int sum_pre = INT_MIN,sum_rear = 0;
+        Q.push(root);
+        int sz = 1;
+        int layer = 0,h = 0;
+        while(!Q.empty()){
+            ++h;
+            while(sz){
+                TreeNode* tmp = Q.front();
+                sum_rear += tmp->val;
+                if(tmp->left)
+                    Q.push(tmp->left);
+                if(tmp->right)
+                    Q.push(tmp->right);
+                Q.pop();
+                --sz;
+            }
+            sz = Q.size();
+            sum_pre = sum_rear>sum_pre?(layer = h,sum_rear):sum_pre;
+            sum_rear = 0;
+        }
+        return layer;
+    }
+};
 
+LeetCode【889】【根据前序和后序遍历构造二叉树】：https://leetcode-cn.com/problems/construct-binary-tree-from-preorder-and-postorder-traversal/
+class Solution {
+public:
+    TreeNode* constructFromPrePost(vector<int>& pre, vector<int>& post) {
+        int len_pre = pre.size();
+        if(!len_pre) return nullptr;
+        TreeNode* root = new TreeNode(pre[0]);
+        if(len_pre == 1) return root;
+
+        int i = 0;
+        for(;i<len_pre;++i)
+            if(post[i] == pre[1])
+                break;
+
+        vector<int> newLeftPre(pre.begin()+1, pre.begin()+i+2);
+        vector<int> newLeftPos(post.begin(), post.begin()+i+1);
+        vector<int> newRightPre(pre.begin()+i+2, pre.end());
+        vector<int> newRightPos(post.begin()+i+1, post.end()-1);
+
+        root->left = constructFromPrePost(newLeftPre, newLeftPos);
+        root->right = constructFromPrePost(newRightPre, newRightPos);
+        return root;
+    }
+};
+
+LeetCode【541】【	反转字符串II】：https://leetcode-cn.com/problems/reverse-string-ii/submissions/
+class Solution {
+public:
+    string reverseStr(string s, int k) {
+        int len = s.size();
+        for(int i = 0;i<len;i+=(2*k)){
+            if(i+k <= len){
+                reverse(s.begin()+i,s.begin()+i+k);
+                continue;
+            }
+            reverse(s.begin()+i,s.end());
+        }
+        return s;
+    }
+};
+
+LeetCode【557】【反转字符串中的单词III】：https://leetcode-cn.com/problems/reverse-words-in-a-string-iii/
+class Solution {
+public:
+    void Swap(char*& s1,char*& s2){
+        char tmp = *s1;
+        *s1 = *s2;
+        *s2 = tmp;
+    }
+    string reverseWords(string s) {
+        char* start = (char*)s.c_str();
+        while(*start){
+            while(*start && isspace(*start))
+                ++start;
+            char* end = start;
+            while(*end && !isspace(*end))
+                ++end;
+            char* tmp = end; 
+            --end;
+            int len = (end - start) + 1;
+            if(*start){
+                for(int i = 0;i<len/2;++i){
+                    Swap(start,end);
+                    start++,--end;
+                }
+            }
+            start = tmp;
+        }
+        return s;
+    }
+};
