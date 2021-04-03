@@ -1429,3 +1429,94 @@ public:
         return s;
     }
 };
+
+剑指offer【35】【复杂链表的复制】：https://leetcode-cn.com/problems/fu-za-lian-biao-de-fu-zhi-lcof/
+class Solution {
+public:
+    Node* copyRandomList(Node* head) {
+        if(!head)
+            return nullptr;
+        Node* tmp = head;
+        while(tmp){
+            Node* des = new Node(tmp->val);//拷贝值
+            des->next = tmp->next;//插入旧链
+            des->random = tmp->random;//暂指旧链random 
+            tmp->next = des;//完成节点插入
+            tmp = des->next;  //旧链后移
+        }
+        tmp = head->next;
+        while(tmp){//纠正random
+            if(tmp->random)
+                tmp->random = tmp->random->next;
+            if(tmp->next)
+                tmp = tmp->next->next;
+            else
+                break;
+        }
+        tmp = head;
+        Node* newhead = head->next;
+        Node* newtmp = newhead;
+        while(tmp){//分离两链
+            tmp->next = newtmp->next;
+            tmp = tmp->next;
+            if(tmp){
+                newtmp->next = tmp->next;
+                newtmp = newtmp->next;
+            } 
+        }
+        return newhead;
+    }
+};
+
+剑指offer【14】【剪绳子-II】：https://leetcode-cn.com/problems/jian-sheng-zi-ii-lcof/
+class Solution {
+public:
+    int cuttingRope(int n) {
+        if(n<=3)
+            return n-1;
+        long res = 1;
+        while(n>4){
+            n-=3;
+            res=res*3%1000000007;
+        }
+        res = res*n%1000000007;
+        return res;
+    }
+};
+
+LeetCode【260】【只出现一次的数字】：https://leetcode-cn.com/problems/single-number-iii/
+class Solution {
+public:
+    vector<int> singleNumber(vector<int>& nums) {
+        vector<int> res(2,0);
+        for(int i =0;i<nums.size();++i)
+            res[0]^=nums[i];
+        res[1] = res[0];
+        int flag = 0;
+        for(;flag<32;++flag)
+            if(res[0]>>flag&1)
+                break;
+        for(int i = 0;i<nums.size();++i){
+            if(nums[i]>>flag&1)
+                res[0]^=nums[i];
+        }
+        res[1]^=res[0];
+        return res;
+    }
+};
+
+LeetCode【137】【只出现一次的数字II】：https://leetcode-cn.com/problems/single-number-ii/
+class Solution {
+public:
+    int singleNumber(vector<int>& nums) {
+        int res = 0;
+        for(int i = 0;i<32;++i){
+            int cnt = 0;
+            for(int num :nums)
+                cnt += (num>>i)&1;
+            cnt%=3;
+            res += cnt<<i;
+        }
+        return res;
+    }
+};
