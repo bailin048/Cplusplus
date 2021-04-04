@@ -1520,3 +1520,111 @@ public:
         return res;
     }
 };
+
+LeetCode【215】【数组中的第K个最大元素】：https://leetcode-cn.com/problems/single-number-ii/
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        priority_queue<int> q(nums.begin(),nums.end());
+        for(int i = 0;i<k-1;++i)
+            q.pop();
+        return q.top();
+    }
+};
+
+LeetCode【114】【二叉树展开为链表】：https://leetcode-cn.com/problems/flatten-binary-tree-to-linked-list/
+class Solution {
+public:
+    void pre_order(TreeNode* root,queue<TreeNode*>& Q){
+        if(!root)
+            return;
+        Q.push(root);
+        pre_order(root->left,Q);
+        pre_order(root->right,Q);
+    }
+    void flatten(TreeNode* root) {
+        queue<TreeNode*> Q;
+        pre_order(root,Q);
+        while(!Q.empty()){
+            TreeNode* p = Q.front();
+            Q.pop();
+            p->left = nullptr;
+            p->right = Q.empty()?nullptr:Q.front();
+        }
+    }
+};
+
+LeetCode【116】【填充每个节点的下一个右侧节点指针】：https://leetcode-cn.com/problems/populating-next-right-pointers-in-each-node/
+class Solution {
+public:
+    Node* connect(Node* root) {
+        if(!root)
+            return nullptr;
+        queue<Node*> Q;
+        Q.push(root);
+        while(!Q.empty()){
+            int sz = Q.size();
+            for(int i = 0;i<sz;++i){
+                Node* p = Q.front();
+                Q.pop();
+                if(i<sz-1)
+                    p->next = Q.front();
+                if(p->left)
+                    Q.push(p->left);
+                if(p->right)
+                    Q.push(p->right);
+            }
+        }
+        return root;
+    }
+};
+【方法2】：
+class Solution {
+public:
+    Node* connect(Node* root) {
+        if(!root)
+            return nullptr;
+        Node* temp = root;
+        while(temp->left){
+            Node* head = temp;
+            while(head){
+                head->left->next = head->right;
+                if(head->next)
+                    head->right->next =  head->next->left;
+                head = head->next;
+            }
+            temp = temp->left; 
+        }
+        return root;
+    }
+};
+
+LeetCode【378】【有序矩阵中第k小的元素】：https://leetcode-cn.com/problems/kth-smallest-element-in-a-sorted-matrix/
+class Solution {
+public:
+    bool check(vector<vector<int>>& matrix,int& mid,int& k){
+        int n = matrix.size();
+        int cnt = 0;
+        int i = n-1,j = 0;
+        while(i>=0&&j<n){
+            if(matrix[i][j]<=mid){
+                cnt += i+1;
+                ++j;
+            }else
+                --i;
+        }
+        return cnt>=k;
+    }
+    int kthSmallest(vector<vector<int>>& matrix, int k) {
+        int n = matrix.size();
+        int left = matrix[0][0],right = matrix[n-1][n-1];
+        while(left<right){
+            int mid = left + ((right-left)>>1);
+            if(check(matrix,mid,k))
+                right = mid;
+            else
+                left = mid + 1;
+        }
+        return left;
+    }
+};
