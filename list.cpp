@@ -3,7 +3,7 @@
 #pragma warning(disable:4996)
 using namespace std;
 
-namespace bite
+namespace BL
 {
     // List的节点类
     template<class T>
@@ -160,7 +160,7 @@ namespace bite
     };
 };
 template<class T>
-void PrintList(const bite::list<T>& l) {
+void PrintList(const BL::list<T>& l) {
     auto it = l.begin();
     while (it != l.end()) {
         cout << *it << "->";
@@ -169,17 +169,17 @@ void PrintList(const bite::list<T>& l) {
     cout << endl;
 }
 void TestListCreat() {
-    bite::list<int> L1;//无参构造
-    bite::list<int> L2(10,5);//常值初始化构造
+    BL::list<int> L1;//无参构造
+    BL::list<int> L2(10,5);//常值初始化构造
     cout << "L2:";
     PrintList(L2);
 
     int nums[] = { 1,2,3,4,5,6,7,8,9,10 };
-    bite::list<int> L3(nums,nums+sizeof(nums)/sizeof(nums[0]));//区间构造
+    BL::list<int> L3(nums,nums+sizeof(nums)/sizeof(nums[0]));//区间构造
     cout << "L3:";
     PrintList(L3);
 
-    bite::list<int> L4(L3);//拷贝构造
+    BL::list<int> L4(L3);//拷贝构造
     cout << "L4:";
     PrintList(L4);
 
@@ -189,7 +189,7 @@ void TestListCreat() {
 
 }
 void TestPP() {
-    bite::list<int> l;
+    BL::list<int> l;
     l.push_back(1);
     l.push_back(2);
     l.push_back(3);
@@ -211,7 +211,7 @@ void TestPP() {
 }
 void TestInsertAndErase() {
     int array[] = { 1,2,3,4,5 };
-    bite::list<int> L(array, array + sizeof(array) / sizeof(array[0]));
+    BL::list<int> L(array, array + sizeof(array) / sizeof(array[0]));
 
     auto pos = L.begin();
     L.insert(L.begin(), 0);
@@ -227,6 +227,7 @@ void TestInsertAndErase() {
 
     pos = L.begin();
     cout << *pos << endl;
+
     auto it = L.begin();
     while (it != L.end())
         it = L.erase(it);
