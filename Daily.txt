@@ -1628,3 +1628,146 @@ public:
         return left;
     }
 };
+
+LeetCode【31】【下一个排列】：https://leetcode-cn.com/problems/next-permutation/
+class Solution {
+public:
+    void swap(int& a,int& b){
+        int tmp = a;
+        a = b;
+        b = tmp;
+    } 
+    void nextPermutation(vector<int>& nums) {
+        int boarder = 0;
+        int n = nums.size();
+        if(n == 1)
+            return;
+        for(int i = n - 1;i>0;--i){//寻找右边逆序区边界
+            if(nums[i-1]<nums[i]){
+                boarder = i-1;
+                break;
+            }
+        }
+        if(nums[boarder]<nums[boarder + 1]){
+            for(int i = n - 1;i>boarder;--i){
+                if(nums[i]>nums[boarder]){
+                    swap(nums[i],nums[boarder]);
+                    break;
+                }
+            }
+            int start = boarder + 1,end = n - 1;
+            while(start<end)
+                swap(nums[start++],nums[end--]);
+        }else{
+            for(int i = 0;i<n/2;++i)
+                swap(nums[i],nums[n-i-1]);
+        }
+    }
+};
+
+LeetCode【55】【跳跃游戏】：https://leetcode-cn.com/problems/jump-game/
+【回溯超时】
+class Solution {
+public:
+    bool jump(vector<int>&nums,int location,int target){
+        if(location == target)//跳到
+            return true;
+        if(!nums[location])//遇0
+            return false;
+        bool flag = true;
+        for(int i = 1;i<=nums[location];++i){//回溯
+            flag = jump(nums,location+i,target);
+            if(flag)
+                return flag;
+        }
+        return false;
+    }
+    bool canJump(vector<int>& nums) {
+        int n = nums.size();
+        return jump(nums,0,n - 1);
+    }
+};
+【贪心】：
+class Solution {
+public:
+    bool canJump(vector<int>& nums) {
+        int n = nums.size();
+        int rightmost = 0;
+        for(int i = 0;i<n;++i){
+            if(i<=rightmost){
+                rightmost = max(rightmost, i + nums[i]);
+            if (rightmost >= n - 1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+};
+
+LeetCode【113】【路径总和】：https://leetcode-cn.com/problems/path-sum-ii/
+class Solution {
+public:
+    vector<vector<int>> res;
+    vector<int> path;
+    void dfs(TreeNode* root,int targetSum){
+        if(!root)
+            return;
+        path.push_back(root->val);
+        targetSum-=root->val;
+        if(!root->left && !root->right && !targetSum)
+            res.push_back(path);
+        dfs(root->left,targetSum);
+        dfs(root->right,targetSum);
+        path.pop_back();
+        targetSum+=root->val;
+    }
+    vector<vector<int>> pathSum(TreeNode* root, int targetSum) {
+        dfs(root,targetSum);
+        return res;
+    }
+};
+
+LeetCode【496】【下一个更多元素I】：https://leetcode-cn.com/problems/next-greater-element-i/
+【暴力解法】
+class Solution {
+public:
+    vector<int> nextGreaterElement(vector<int>& nums1, vector<int>& nums2) {
+        vector<int> res;
+        int n1 = nums1.size();
+        int n2 = nums2.size();
+        for(int i = 0;i<n1;++i){
+            int cur = nums1[i];
+            int j = 0;
+            while(j<n2 && nums2[j]!=cur)
+                ++j;
+            ++j;
+            while(j<n2 && nums2[j]<cur)
+                ++j;
+            j>=n2?res.push_back(-1):res.push_back(nums2[j]);
+        }
+        return res;
+    }
+};
+
+LeetCode【503】【下一个更大元素II】：https://leetcode-cn.com/problems/next-greater-element-ii/
+【暴力解法】：
+class Solution {
+public:
+    vector<int> nextGreaterElements(vector<int>& nums) {
+        vector<int> res;
+        int n = nums.size();
+        for(int i = 0;i<n;++i){
+            int cur = nums[i];
+            int rearindex = i+1;
+            int preindex = 0;
+            while(preindex<i && nums[preindex]<=cur)
+                ++preindex;
+            while(rearindex<n&&nums[rearindex]<=cur)
+                ++rearindex;
+            int target = rearindex<n?nums[rearindex]:preindex<i?nums[preindex]:-1;
+            res.push_back(target);
+        }
+        return res;
+    }
+};
