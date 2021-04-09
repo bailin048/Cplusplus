@@ -1771,3 +1771,139 @@ public:
         return res;
     }
 };
+
+LeetCode【46】【全排列】：https://leetcode-cn.com/problems/permutations/
+【回溯】
+class Solution {
+public:
+    vector<vector<int>> res;
+    vector<int> tmp;
+    void swap(int& a,int& b){
+        int x = a;
+        a = b;
+        b = x;
+    }
+    void DP(vector<int>&nums,int index,int& SZ){
+        if(index == SZ){
+            res.push_back(tmp);
+            return;
+        }
+        for(int i = index;i<SZ;++i){
+            tmp.push_back(nums[i]);
+            swap(nums[index],nums[i]);
+            DP(nums,index+1,SZ);
+            tmp.pop_back();
+            swap(nums[index],nums[i]);
+        }
+    }
+    vector<vector<int>> permute(vector<int>& nums) {
+        int SZ = nums.size();
+        DP(nums,0,SZ);
+        return res;
+    }
+};
+
+LeetCode【51】【N皇后】：https://leetcode-cn.com/problems/n-queens/
+class Solution {
+public:
+    vector<vector<string>> res;
+    bool IsValid(const vector<string>& tmp,const int& row,const int& col,const int& n){
+        for(int i = row - 1;i>=0;--i){//上方
+            if(tmp[i][col] == 'Q')
+                return false;
+        }
+        for(int i = row - 1,j = col + 1;i>=0&&j<n;--i,++j){//右上方
+            if(tmp[i][j]=='Q')
+                return false;
+        }
+        for(int i = row - 1,j = col - 1;i>=0&&j>=0;--i,--j){//左上方
+            if(tmp[i][j]=='Q')
+                return false;
+        }
+        return true;
+    }
+    void BackTrack(vector<string>& tmp,int row,const int& n){
+        if(row == n){
+            res.push_back(tmp);
+            return;
+        }
+        for(int col = 0;col<n;++col){
+            if(!IsValid(tmp,row,col,n))
+                continue;
+            tmp[row][col] = 'Q';
+            BackTrack(tmp,row+1,n);
+            tmp[row][col] = '.';
+        }
+    }
+    vector<vector<string>> solveNQueens(int n) {
+        vector<string> tmp(n,string(n,'.'));
+        BackTrack(tmp,0,n);
+        return res;
+    }
+};
+
+LeetCode【52】【N皇后II】：https://leetcode-cn.com/problems/n-queens-ii/
+class Solution {
+public:
+    bool IsValid(const vector<int>& tmp,const int& row,const int& col){
+        for(int i = row - 1;i >= 0;--i)//上方
+            if(tmp[i] == col)
+                return false;
+        for(int i = row - 1;i >= 0;--i)//左上方
+            if(tmp[i] == col - row + i)
+                return false;
+        for(int i = row - 1;i >= 0;--i)//右上方
+            if(tmp[i] == col + row - i)
+                return false;
+        return true;
+    }
+    void BackTrack(vector<int>& tmp,int row,int& cnt,const int& n){
+        if(row == n){
+            ++cnt;
+            return;
+        }
+        for(int col = 0;col<n;++col){
+            if(!IsValid(tmp,row,col))
+                continue;
+            tmp[row] = col;
+            BackTrack(tmp,row+1,cnt,n);
+        }
+    }
+    int totalNQueens(int n) {
+        vector<int> tmp(n);
+        int cnt = 0;
+        BackTrack(tmp,0,cnt,n);
+        return cnt;
+    }
+};
+
+LeetCode【322】【零钱兑换】：https://leetcode-cn.com/problems/coin-change/
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {
+        vector<int> dp(amount+1,amount+1);//初始化
+        dp[0] = 0;//0值初始化
+        int num = coins.size();
+        for(int i = 1;i<=amount;++i){
+            for(int j = 0;j<num;++j)
+                if (coins[j] <= i) 
+                    dp[i] = min(dp[i], dp[i - coins[j]] + 1);
+        }
+        return dp[amount] > amount ? -1 : dp[amount];
+    }
+};
+
+LeetCode【518】【零钱兑换】：https://leetcode-cn.com/problems/coin-change-2/
+class Solution {
+public:
+    int change(int amount, vector<int>& coins) {
+        vector<int> dp(amount+1,0);
+        int len = coins.size();
+        dp[0] = 1;
+        for(int i = 0;i<len;++i)
+            for(int j = coins[i];j<=amount;++j){
+                dp[j] += dp[j-coins[i]];
+        }
+        return dp[amount];
+    }
+};
