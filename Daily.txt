@@ -1907,3 +1907,32 @@ public:
         return dp[amount];
     }
 };
+
+LeetCode【59】【螺旋矩阵II】：https://leetcode-cn.com/problems/spiral-matrix-ii/
+public:
+    vector<vector<int>> generateMatrix(int n) {
+        vector<vector<int>> ans(n,vector(n,0));
+        int num = 1;
+        int Max_num = n*n;
+        int left = 0,top = 0,right = n - 1,bottom = n-1;
+        while(num<= Max_num){
+            int l = left,r =right,b = bottom,t = top;
+            while(l<=right)//上
+                ans[top][l++] = num++;
+            ++t;
+            while(t<=bottom)
+                ans[t++][right] = num++;
+            --r;
+            while(r>=left)
+                ans[bottom][r--] = num++;
+            --b;
+            while(b>top)
+                ans[b--][left] = num++;
+            ++left;
+            --right;
+            ++top;
+            --bottom;
+        }
+        return ans;
+    }
+};
