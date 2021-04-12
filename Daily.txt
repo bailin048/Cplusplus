@@ -1936,3 +1936,49 @@ public:
         return ans;
     }
 };
+
+LeetCode【299】【猜数字游戏】：https://leetcode-cn.com/problems/bulls-and-cows/
+class Solution {
+public:
+    char* helper(int num){
+        int tmp = num;
+        int cnt = 1;
+        while(tmp/=10)
+            ++cnt;
+        tmp = 1;
+        for(int i = 1;i<cnt;++i)
+            tmp*=10;
+        char* ans = new char[cnt+1];
+        ans[cnt] ='\0';
+        for(int i = 0;i<cnt;++i){
+            ans[i] = num/tmp+'0';
+            num%=tmp;
+            tmp/=10;
+        }
+        return ans;
+    }
+    string getHint(string secret, string guess) {
+        int len = secret.size();
+        vector<int> cnt_s(10,0);
+        vector<int> cnt_g(10,0);
+        int cnt_A = 0;
+        for(int i = 0;i<len;++i){
+            if(secret[i]==guess[i])
+                ++cnt_A;
+            cnt_s[secret[i]-'0']++;
+            cnt_g[guess[i]-'0']++;
+        }
+        int cnt_B = 0;
+        for(int i = 0;i<10;++i)
+            cnt_B += cnt_s[i]<cnt_g[i]?cnt_s[i]:cnt_g[i];
+        cnt_B-=cnt_A;
+        char* A = helper(cnt_A),*B =helper(cnt_B);
+        string ans;
+        ans.append(A);
+        ans.append("A");
+        ans.append(B);
+        ans.append("B");
+        delete[] A,delete[] B;
+        return ans;
+    }
+};
