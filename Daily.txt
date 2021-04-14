@@ -1802,6 +1802,33 @@ public:
         return res;
     }
 };
+【方法2：标志数组】：
+class Solution {
+public:
+    vector<vector<int>> res;
+    vector<int> tmp;
+    void helper(vector<int>&nums,int& SZ,vector<int>& used){
+        if(tmp.size() == SZ){
+            res.push_back(tmp);
+            return;
+        }
+        for(int i = 0;i<SZ;++i){
+            if(used[i]==1)
+                continue;
+            used[i] = 1;
+            tmp.push_back(nums[i]);
+            helper(nums,SZ,used);
+            used[i] = 0;
+            tmp.pop_back();
+        }
+    }
+    vector<vector<int>> permute(vector<int>& nums) {
+        int SZ = nums.size();
+        vector<int> used(SZ,0);
+        helper(nums,SZ,used);
+        return res;
+    }
+};
 
 LeetCode【51】【N皇后】：https://leetcode-cn.com/problems/n-queens/
 class Solution {
@@ -1979,6 +2006,207 @@ public:
         ans.append(B);
         ans.append("B");
         delete[] A,delete[] B;
+        return ans;
+    }
+};
+
+LeetCode【43】【字符串相乘】：https://leetcode-cn.com/problems/multiply-strings/
+class Solution {
+public:
+    string multiply(string num1, string num2) {
+        if(num1 == "0" ||num2 == "0")
+            return "0";
+        int len1 =num1.size(),len2 = num2.size();
+        string ans(len1+len2,'0');
+        for(int i =len1-1;i>=0;--i){
+            for(int j = len2 - 1;j>=0;--j){
+                int cur = (num1[i] - '0') * (num2[j] - '0') + (ans[i+j+1] - '0');
+                ans[i+j+1] = cur % 10 + '0';  
+                ans[i+j] += cur / 10;  
+            }
+        }
+        if (ans[0]=='0')
+            ans.erase(ans.begin());
+        return ans;        
+    }
+};
+
+LeetCode【47】【全排列】：https://leetcode-cn.com/problems/permutations-ii/
+class Solution {
+public:
+    vector<vector<int>> res;
+    vector<int> tmp;
+    void helper(vector<int>&nums,int& SZ,vector<int>& used){
+        if(tmp.size() == SZ){
+            res.push_back(tmp);
+            return;
+        }
+        for(int i = 0;i<SZ;++i){
+            if(used[i] || (i>0 && nums[i]==nums[i-1] && !used[i-1]))
+                continue;
+            used[i] = 1;
+            tmp.push_back(nums[i]);
+            helper(nums,SZ,used);
+            used[i] = 0;
+            tmp.pop_back();
+        }
+    }
+    vector<vector<int>> permuteUnique(vector<int>& nums) {
+        int SZ = nums.size();
+        sort(nums.begin(),nums.end());
+        vector<int> used(SZ,0);
+        helper(nums,SZ,used);
+        return res;
+    }
+};
+
+LeetCode【117】【填充每个节点的下一个右侧右侧节点指针】：https://leetcode-cn.com/problems/populating-next-right-pointers-in-each-node-ii/
+class Solution {
+public:
+    Node* connect(Node* root) {
+        if(!root)
+            return root;
+        queue<Node*> Q;
+        Q.push(root);
+        Node* t = nullptr;
+        while(!Q.empty()){
+            int sz = Q.size();
+            for(int i = 0;i<sz;++i){
+                Node* tmp = Q.front();
+                Q.pop();
+                if(Q.empty()|| i == sz-1)
+                    t = nullptr;
+                else
+                    t = Q.front();
+                tmp->next = t; 
+                if(tmp->left)
+                    Q.push(tmp->left);
+                if(tmp->right)
+                    Q.push(tmp->right);
+            }
+        }
+        return root;
+    }
+};
+
+LeetCode【589】【N叉树的前序遍历】：https://leetcode-cn.com/problems/n-ary-tree-preorder-traversal/
+【迭代法】
+class Solution {
+public:
+    vector<int> preorder(Node* root) {
+        vector<int> ans;
+        if(!root)
+            return ans;
+        stack<Node*> s;
+        s.push(root);
+        while(!s.empty()){
+            Node* tmp = s.top();
+            ans.push_back(tmp->val);
+            s.pop();
+            for(int i = tmp -> children.size()-1; i >= 0; --i)
+                s.push(tmp->children[i]);
+        }
+        return ans;
+    }
+};
+【递归法】：
+class Solution {
+public:
+    void dfs(Node* root,vector<int>& ans){
+        if(!root)
+            return;
+        ans.push_back(root->val);
+        int sz = root->children.size();
+        for(int i = 0;i<sz;++i)
+            dfs(root->children[i],ans);
+    }
+    vector<int> preorder(Node* root) {
+        vector<int> ans;
+        dfs(root,ans);
+        return ans;
+    }
+};
+
+LeetCode【590】【N叉树的后序遍历】：https://leetcode-cn.com/problems/n-ary-tree-postorder-traversal/
+【递归法】：
+class Solution {
+public:
+    void bfs(Node* root,vector<int>& ans){
+        if(!root)
+            return;
+        int sz = root->children.size();
+        for(int i = 0;i<sz;++i)
+            bfs(root->children[i],ans);
+        ans.push_back(root->val);
+    }
+    vector<int> postorder(Node* root) {
+        vector<int> ans;
+        bfs(root,ans);
+        return ans;
+    }
+};
+【迭代法】：
+class Solution {
+public:
+    vector<int> postorder(Node* root) {
+        vector<int> ans;
+        if(!root)
+            return ans;
+        stack<Node*> s;
+        s.push(root);
+        while(!s.empty()){
+            Node* tmp = s.top();
+            ans.push_back(tmp->val);
+            s.pop();
+            int sz = tmp->children.size();
+            for(int i=0;i<sz;++i)
+                s.push(tmp->children[i]);
+        }
+        reverse(ans.begin(),ans.end());
+        return ans;
+    }
+};
+
+LeetCode【559】【N叉树的最大深度】:https://leetcode-cn.com/problems/maximum-depth-of-n-ary-tree/
+class Solution {
+public:
+    int maxDepth(Node* root) {
+        if(!root)
+            return 0;
+        int sz = root->children.size();
+        int max =0,tmp = 0; 
+        for(int i = 0;i<sz;++i){
+            tmp = maxDepth(root->children[i]);
+            max = tmp>max?tmp:max;
+        }
+        return max + 1;
+    }
+};
+
+LeetCode【429】【N叉树的层序遍历】：https://leetcode-cn.com/problems/n-ary-tree-level-order-traversal/
+class Solution {
+public:
+    vector<vector<int>> levelOrder(Node* root) {
+        vector<vector<int>> ans;
+        if(!root)
+            return ans;
+        queue<Node*> Q;
+        Q.push(root);
+        while(!Q.empty()){
+            vector<int> tmp;
+            int sz = Q.size();
+            for(int i = 0;i<sz;++i){
+                Node* node = Q.front();
+                Q.pop();
+                tmp.push_back(node->val);
+                int SZ = node->children.size();
+                for(int i = 0;i<SZ;++i){
+                    if(node->children[i])
+                        Q.push(node->children[i]);
+                }
+            }
+            ans.push_back(tmp);
+        }
         return ans;
     }
 };
