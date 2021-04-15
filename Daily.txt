@@ -2210,3 +2210,79 @@ public:
         return ans;
     }
 };
+
+LeetCode【49】【丑数】：https://leetcode-cn.com/problems/chou-shu-lcof/
+class Solution {
+public:
+    int nthUglyNumber(int n) {
+        int* dp = new int[n];
+        dp[0] = 1;
+        int a=0,b=0,c=0;
+        for(int i = 1;i<n;++i){
+            int n1 = 2*dp[a],n2=3*dp[b],n3=5*dp[c];
+            dp[i] = min(min(n1,n2),n3);
+            if(dp[i]==n1) ++a;
+            if(dp[i]==n2) ++b;
+            if(dp[i]==n3) ++c;
+        }
+        return dp[n-1];
+    }
+};
+
+LeetCode【784】【字母大小全排列】：https://leetcode-cn.com/problems/letter-case-permutation/
+class Solution {
+public:
+    vector<string> res;
+    void BackTrack(string& tmp,int index,const int& sz){
+        if(index == sz){
+            res.push_back(tmp);
+            return;
+        }
+        BackTrack(tmp,index+1,sz);
+        if(tmp[index]>'9'){
+            tmp[index]^=32;
+            BackTrack(tmp,index+1,sz);
+        }
+    }
+    vector<string> letterCasePermutation(string S) {
+        string tmp(S);
+        int sz = S.size();
+        BackTrack(tmp,0,sz);
+        return res;
+    }
+};
+
+LeetCode【500】【键盘行】：https://leetcode-cn.com/problems/keyboard-row/
+class Solution {
+public:
+    vector<string> res;
+    vector<string> findWords(vector<string>& words) {
+        vector<vector<int>> comp(3,vector(26,0));
+        char* s1 = "qwertyuiop";
+        char* s2 = "asdfghjkl";
+        char* s3 = "zxcvbnm";
+        int len[3] = {10,9,7};
+        for(int i = 0;i<len[0];++i){
+            comp[0][s1[i]-'a'] = 1;
+            if(i<len[1])
+                comp[1][s2[i]-'a'] = 1;
+            if(i<len[2])
+                comp[2][s3[i]-'a'] = 1;
+        }
+        int n = words.size();
+        for(int i = 0;i<n;++i){
+            int sz = words[i].size();
+            for(int j = 0;j<3;++j)
+                Add(comp[j],words[i],len[j],sz);
+        }
+        return res;
+    }
+    void Add(const vector<int>& comp,const string& word,const int& compsz,const int& wordsz){
+        for(int i = 0;i<wordsz;++i){
+            char tmp = tolower(word[i]);
+            if(comp[tmp-'a']!=1)
+                return;
+        }
+        res.push_back(word);
+    }
+};
