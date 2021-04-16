@@ -2286,3 +2286,19 @@ public:
         res.push_back(word);
     }
 };
+
+LeetCode【205】【同构字符串】：https://leetcode-cn.com/problems/isomorphic-strings/
+class Solution {
+public:
+    bool isIsomorphic(string s, string t) {
+        int* cnt_s = new int[128];
+        int* cnt_t = new int[128];
+        int len = s.size();
+        for(int i = 0;i<len;++i){
+            if(cnt_s[s[i]]!=cnt_t[t[i]])
+                return false;
+            cnt_s[s[i]]=cnt_t[t[i]]=i;
+        }
+        return true;
+    }
+};
