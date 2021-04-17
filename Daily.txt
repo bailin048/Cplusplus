@@ -2338,3 +2338,52 @@ public:
         return (max1-1)*(max2-1);
     }
 };
+
+牛客【栈的压入弹出】：https://www.nowcoder.com/practice/d77d11405cc7470d82554cb392585106?tpId=13&tqId=11174&rp=1&ru=%2Factivity%2Foj&qru=%2Fta%2Fcoding-interviews%2Fquestion-ranking&tab=answerKey
+class Solution {
+public:
+    bool IsPopOrder(vector<int> pushV,vector<int> popV) {
+        stack<int> S;
+        int index_pop = 0;
+        int sz = popV.size();
+        for(int i = 0;i<sz;++i){
+           S.push(pushV[i]);
+           while(!S.empty() && S.top() == popV[index_pop])
+               S.pop(),++index_pop;
+        }
+        if(S.empty())
+            return true;
+        return false;
+    }
+};
+
+牛客【斐波那契数列】：https://www.nowcoder.com/practice/c6c7742f5ba7442aada113136ddea0c3?tpId=13&tqId=11160&tPage=1&rp=1&ru=%2Fta%2Fcoding-interviews&qru=%2Fta%2Fcoding-interviews%2Fquestion-ranking&tab=answerKey
+class Solution {
+public:
+    int Fibonacci(int n) {
+        if(n<2)
+            return n;
+        int first = 0;
+        int second = 1;
+        int third = 0;
+        --n;
+        while(n>0){
+            third = first+second;
+            first = second;
+            second = third;
+            n--;
+        }
+        return third;
+    }
+};
+
+牛客【跳台扩展问题】：https://www.nowcoder.com/practice/22243d016f6b47f2a6928b4313c85387?tpId=13&tqId=11162&tPage=1&rp=1&ru=%2Fta%2Fcoding-interviews&qru=%2Fta%2Fcoding-interviews%2Fquestion-ranking&tab=answerKey
+class Solution {
+public:
+    int jumpFloorII(int number) {
+        int res = 1;
+        while(--number)
+            res<<=1;
+        return res;
+    }
+};
