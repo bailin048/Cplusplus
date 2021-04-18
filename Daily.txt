@@ -2387,3 +2387,110 @@ public:
         return res;
     }
 };
+
+LeetCode【232】【用对列模拟栈】：https://leetcode-cn.com/problems/implement-stack-using-queues/
+class MyStack {
+public:
+    queue<int> q1;
+    queue<int> q2;
+    /** Initialize your data structure here. */
+    MyStack() {} 
+    /** Push element x onto stack. */
+    void push(int x) {
+        q2.push(x);
+        while(!q1.empty()){
+            q2.push(q1.front());
+            q1.pop();
+        }
+        swap(q1,q2);
+    }
+    
+    /** Removes the element on top of the stack and returns that element. */
+    int pop() {
+        int tmp = q1.front();
+        q1.pop();
+        return tmp;
+    }
+    
+    /** Get the top element. */
+    int top() {
+        return q1.front();
+    }
+    
+    /** Returns whether the stack is empty. */
+    bool empty() {
+        return q1.empty();
+    }
+};
+
+LeetCode【232】【用栈实现队列】：https://leetcode-cn.com/problems/implement-queue-using-stacks/
+class MyQueue {
+public:
+    stack<int> sin;
+    stack<int> sout;
+    /** Initialize your data structure here. */
+    MyQueue() {    }
+    
+    /** Push element x to the back of queue. */
+    void push(int x) {
+        sin.push(x);
+    }
+    
+    /** Removes the element from in front of queue and returns that element. */
+    int pop() {
+        if(sout.empty()){
+            while(!sin.empty()){
+                sout.push(sin.top());
+                sin.pop();
+            }
+        }
+        int tmp = sout.top();
+        sout.pop();
+        return tmp;
+    }
+    
+    /** Get the front element. */
+    int peek() {
+        if(sout.empty()){
+            while(!sin.empty()){
+                sout.push(sin.top());
+                sin.pop();
+            }
+        }
+        return sout.top(); 
+    }
+    
+    /** Returns whether the queue is empty. */
+    bool empty() {
+        return sin.empty()&&sout.empty();
+    }
+};
+
+LeetCode【155】【最小栈】：https://leetcode-cn.com/problems/min-stack/
+class MinStack {
+public:
+    stack<int> smin;
+    stack<int> st;
+    /** initialize your data structure here. */
+    MinStack() {    }
+    
+    void push(int val) {
+        st.push(val);
+        if(smin.empty() ||smin.top()>=val)
+            smin.push(val);
+    }
+    
+    void pop() {
+         if(st.top()==smin.top())
+            smin.pop();
+        st.pop();
+    }
+    
+    int top() {
+        return st.top();
+    }
+    
+    int getMin() {
+        return smin.top();
+    }
+};
