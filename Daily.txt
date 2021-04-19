@@ -2494,3 +2494,33 @@ public:
         return smin.top();
     }
 };
+
+LeetCode【15】【三数之和】：https://leetcode-cn.com/problems/3sum/
+class Solution {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        int sz = nums.size();
+        sort(nums.begin(),nums.end());
+        vector<vector<int>> ans;
+        for(int i = 0;i<sz;++i){
+            if(nums[i]>0)
+                return ans;
+            if(i>0 && nums[i]==nums[i-1])
+                continue;
+            int left = i+1,right = sz-1;
+            while(left<right){
+                if(nums[left] + nums[right] > -nums[i])
+                    --right;
+                else if (nums[left] + nums[right]<-nums[i])
+                    ++left;
+                else{
+                    ans.push_back(vector<int>{nums[i],nums[left],nums[right]});
+                    while(left<right && nums[right]==nums[right-1]) --right;
+                    while(left<right && nums[left]==nums[left+1]) ++left;
+                    ++left,--right;
+                }
+            }
+        }
+        return ans;
+    }
+};
