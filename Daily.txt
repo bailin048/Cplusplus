@@ -2558,3 +2558,115 @@ public:
         return ans;
     }
 };
+
+LeetCode【606】【根据二叉树创建字符串】：https://leetcode-cn.com/problems/construct-string-from-binary-tree/
+class Solution {
+public:
+    string res;
+    void dfs(TreeNode* t){
+        if(!t)
+            return;
+        char* buf = new char[10];
+        memset(buf,'\0',10);
+        sprintf(buf,"%d",t->val);
+        res.append(buf);
+        if(!t->left){
+            if(!t->right)
+                return;
+            else
+                res.append("()");
+        }else{
+            res.append("(");
+            dfs(t->left);
+            res.append(")");
+        }
+        if(t->right){
+            res.append("(");
+            dfs(t->right);
+            res.append(")");
+        }
+    }
+    string tree2str(TreeNode* t) {
+        dfs(t);
+        return res;
+    }
+};
+
+剑指offer【37】【序列化二叉树】：https://leetcode-cn.com/problems/xu-lie-hua-er-cha-shu-lcof/
+class Codec {
+public:
+    string res;
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        if(!root)
+            return res;
+        queue<TreeNode*> q;
+        q.push(root);
+        while(!q.empty()){
+            int sz = q.size();
+            for(int i = 0;i<sz;++i){
+                TreeNode* t = q.front();
+                q.pop();
+                if(t){
+                    res += to_string(t->val);
+                    res+=",";
+                    q.push(t->left);
+                    q.push(t->right);
+                }
+                else
+                    res+="$,";
+            }
+        }
+        return res;
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data){
+        split(data);
+        int sz = seq.size();
+        int start = 0;
+        return Creat(start,sz);
+    }
+    private:
+    vector<string> seq;
+    void split(string& data){
+        char* start = (char*)data.c_str();
+        char* send = start;
+        while(*send){
+            if(*send == ','){
+                string tmp;
+                for(char* r = start;r!=send;++r)
+                    tmp.push_back(*r);
+                seq.push_back(tmp);
+                start = send + 1;
+                send = start;
+            }else
+                ++send;
+        }
+    }
+    int to_num(const string& str){
+        int res = 0;
+        int flag = 1;
+        int index = 0;
+        if(str[index] =='-'){
+            flag = -1;
+            ++index;
+        }
+        int sz = str.size();
+        for(int i = index;i<sz;i++)
+            res = res*10 + (str[i]-'0');
+        return flag*res;
+    }
+    TreeNode* Creat(int index,const int& sz){
+        if(index>=sz || seq[index][0] == '$')
+            return nullptr;
+        int cnt = 0;
+        for(int i = 0;i<index;++i)
+            if(seq[i][0]=='$')
+                ++cnt;
+        TreeNode* t = new TreeNode(to_num(seq[index]));
+        t->left = Creat(2*(index-cnt)+1,sz);
+        t->right = Creat(2*(index-cnt)+2,sz);
+        return t;
+    }
+};
