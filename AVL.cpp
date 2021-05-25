@@ -36,6 +36,8 @@ public:
 	}
 public:
 	bool Insert(const Ty& data) { return Insert(root, data); }
+	bool Remove(const Ty& key) { return Remove(root, key); }
+	void InOrder() { return InOrder(root); }
 protected:
 	bool Insert(Node*& t, const Ty& data) {
 		//先按BST插入节点，寻找插入位置过程中存储轨迹
@@ -76,15 +78,15 @@ protected:
 			else {//本节点不平衡，需要调整
 				if (parent->bf < 0) {
 					if (p->bf < 0)//右旋(/)
-						RorateR(parent);
+						RotateR(parent);
 					else//左右双旋(<)
-						RorateLR(parent);
+						RotateLR(parent);
 				}
 				else {
 					if (p->bf > 0)//左旋(\)
-						RorateL(parent);
+						RotateL(parent);
 					else//右左双旋(>)
-						RorateRL(parent);
+						RotateRL(parent);
 				}
 				break;//已平衡，跳出
 			}
@@ -101,22 +103,139 @@ protected:
 		}
 		return true;
 	}
+	bool Remove(Node*& t, const Ty& key) {
+		Node* parent = nullptr;
+		Node* p = t;
+		stack<Node*> st;
+		while (p) {		//先找到节点，存储轨迹
+			if (p->val == key)
+				break;
+			parent = p;
+			st.push(parent);
+			if (key > p->val)
+				p = p->right;
+			else
+				p = p->left;
+		}
+		if (!p)//删除目标不存在
+			return false;
+		//删除节点
+		Node* q = nullptr;
+		Node* Nil = new Node(0);//空节点
+		if (p->left && p->right) {//删除目标左右皆有
+			parent = p;
+			q = p->left;
+			st.push(parent);
+			while (q->right) {
+				parent = q;
+				st.push(parent);
+				q = q->right;
+			}
+			p->val = q->val;
+			p = q;//转化为删前驱
+		}
+		//p是删除目标,q是删除目标的子女节点
+		if (p->left) //有左无右
+			q = p->left;
+		else if (p->right)//有右无左
+			q = p->right;
+		else//无左无右
+			q = Nil;
+		bool IsLeft = false;//左孩子标志
+		if (!parent)//删除目标是整棵AVL的根节点
+			t = q == Nil ? nullptr : q;
+		else {
+			//断开p节点，链接它的子女q
+			if (parent->left == p) {//删除目标是左孩子
+				parent->left = q == Nil ? nullptr : q;
+				IsLeft = true;
+			}
+			else//删除目标是右孩子
+				parent->right = q == Nil ? nullptr : q;
+		}
+		//调整平衡
+		while (!st.empty()) {
+			parent = st.top();
+			st.pop();
+			if (q == parent->left || IsLeft)
+				++parent->bf;
+			else
+				--parent->bf;
+			if (abs(parent->bf) == 1)//平衡
+				break;
+			if (!parent->bf) {//向上回溯调整
+				q = parent;
+				continue;
+			}
+			else {//parent失衡
+				if (parent->bf > 0)//令q指向较高的树
+					q = parent->right;
+				else
+					q = parent->left;
+				if (q->bf == 0){//单旋转
+					if (parent->bf < 0){
+						RotateR(parent);
+						parent->bf = 1;
+						parent->right->bf = -1;
+					}
+					else{
+						RotateL(parent);
+						parent->bf = -1;
+						parent->left->bf = 1;
+					}
+				}
+				else if (parent->bf < 0){
+					if (q->bf < 0)  //   /
+						RotateR(parent);
+					else           //   <
+						RotateLR(parent);
+				}
+				else if (parent->bf > 0){
+					if (q->bf > 0)  //   \ 
+						RotateL(parent);
+					else           //   >
+						RotateRL(parent);
+				}
+			}
+			//重新链接
+			if (st.empty())
+				t = parent;
+			else{
+				q = st.top();
+				if (parent->val < q->val)
+					q->left = parent;
+				else
+					q->right = parent;
+			}
+			q = parent;//向上回溯
+		}
+		delete Nil;
+		delete p;
+		return true;
+	}
+	void InOrder(Node*& root) {
+		if (root) {
+			InOrder(root->left);
+			cout << root->val << " ";
+			InOrder(root->right);
+		}
+	}
 private:
-	void RorateL(Node*& t) {
+	void RotateL(Node*& t) {
 		Node* subL = t;
 		t = subL->right;//子节点将变父节点
 		subL->right = t->left;//子节点的左树成为父节点的右树
 		t->left = subL;//父节点左旋
 		subL->bf = t->bf = 0;
 	}
-	void RorateR(Node*& t) {
+	void RotateR(Node*& t) {
 		Node* subR = t;
 		t = subR->left;//子节点将变父节点
 		subR->left= t->right;//子节点的右树成为父节点的左树
 		t->right = subR;//父节点右旋
 		subR->bf = t->bf = 0;
 	}
-	void RorateLR(Node*& t) {
+	void RotateLR(Node*& t) {
 		Node* subL, * subR;
 		subR = t;
 		subL = subR->left;
@@ -136,7 +255,7 @@ private:
 			subR->bf = 1;
 		t->bf = 0;
 	}
-	void RorateRL(Node*& t) {
+	void RotateRL(Node*& t) {
 		Node* subL, * subR;
 		subL = t;
 		subR = subL->right;
@@ -165,6 +284,28 @@ private:
 int main() {
 	vector<int> iv{ 16, 3, 7, 11, 9, 26, 18, 14, 15 };
 	AVLTree<int> avl(iv);
+	avl.InOrder();
+	cout << endl;
+
+	avl.Remove(11);
+	avl.InOrder();	cout << endl;
+	
+	avl.Remove(7);
+	avl.InOrder();	cout << endl;
+	avl.Remove(16);
+	avl.InOrder();	cout << endl;
+	avl.Remove(15);
+	avl.InOrder();	cout << endl;
+	avl.Remove(3);
+	avl.InOrder();	cout << endl;
+	avl.Remove(18);
+	avl.InOrder();	cout << endl;
+	avl.Remove(14);
+	avl.InOrder();	cout << endl;
+	avl.Remove(26);
+	avl.InOrder();	cout << endl;
+	avl.Remove(9);
+	avl.InOrder();	cout << endl;
 	return 0;
 }
 
