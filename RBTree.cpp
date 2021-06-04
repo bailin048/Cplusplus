@@ -61,9 +61,13 @@ public:
 	Ty* operator->() { return &(operator*()); }
 protected:
 	void increment() {
-		if (cur->right != Nil) {
+		if (endn->parent == cur) {//传进来的节点时最后一个节点
+			cur = endn;
+			return;
+		}
+		else if (cur->right != Nil) {
 			cur = cur->right;
-			if (cur == endn)
+			if (cur == Nil) 
 				return;
 			while (cur->left != Nil)
 				cur = cur->left;
@@ -111,11 +115,10 @@ public:
 	typedef RBNode<Ty> Node;
 	typedef RB_iterator<Ty> iterator;
 public:
-	RBTree() :root(Nil), Nil(_BuyNode(Ty())),end_node(_BuyNode()) {
-		Nil->left = Nil->right = Nil->parent  = nullptr;
+	RBTree() :root(Nil), Nil(_BuyNode(Ty())), end_node(_BuyNode()) {
+		Nil->left = Nil->right = Nil->parent = nullptr;
 		end_node->left = end->right = end->parent = nullptr;
 		Nil->color = BLACK;
-		set_end_node();
 	}
 	RBTree(vector<Ty> v) :root(Nil), Nil(_BuyNode(Ty())), end_node(_BuyNode(Ty())) {
 		Nil->left = Nil->right = Nil->parent = nullptr;
@@ -123,7 +126,6 @@ public:
 		Nil->color = BLACK;
 		for (auto& it : v)
 			Insert(it);
-		set_end_node();
 	}
 public:
 	bool Insert(const Ty& data) { return Insert(root, data); }
@@ -154,7 +156,6 @@ protected:
 
 		//调整平衡
 		Insert_Fixup(t, p);
-		set_start_node(root);//更新第一个节点；
 		return true;
 	}
 	bool Remove(Node*& t, const Ty& key) {
@@ -193,32 +194,26 @@ protected:
 		if (p->color == BLACK)
 			Remove_Fixup(t, c);
 		delete p;
-		set_start_node(root);//更新第一个节点；
 		return true;
 	}
 	void InOrder(Node* t) {
-		if (t != Nil && t!=end_node) {
+		if (t != Nil) {
 			InOrder(t->left);
 			cout << t->val << " ";
 			InOrder(t->right);
 		}
 	}
 public:
-	iterator begin() { return iterator(Nil, start_node, start_node, end_node); }
-	iterator end() { return iterator(Nil, end_node, start_node, end_node); }
-	void set_start_node(Node* root) {
-		Node* p = root;
-		while (root != Nil && p->left != Nil)
-			p = p->left;
-		start_node = p;
+	iterator begin() { 
+		set_start_node();
+		return iterator(Nil, start_node, start_node, end_node);
 	}
-	void set_end_node() {
-		Node* p = root;
-		while (p != Nil && p->right != Nil)
-			p = p->right;
-		p->right = end_node;
-		end_node->parent = p;
+	iterator end() { 
+		set_end_node();
+		return iterator(Nil, end_node, start_node, end_node);
 	}
+	void set_start_node() { start_node = Min(); }
+	void set_end_node() { end_node->parent = Max(); }
 private:
 	Node* _BuyNode(const Ty& data) {
 		Node* node = new Node(data);
@@ -363,28 +358,67 @@ private:
 		x->parent = y;
 	}
 private:
+	Node* Min() {
+		Node* p = root;
+		while (root != Nil && p->left != Nil)
+			p = p->left;
+		return p;
+	}
+	Node* Max() {
+		Node* p = root;
+		while (p != Nil && p->right != Nil)
+			p = p->right;
+		return p;
+	}
+private:
 	Node* Nil;
 	Node* root;
-	Node* start_node;
 	Node* end_node;
+	Node* start_node;
 };
-
-int main() {
+void TestRBTree(){//插入删除功能测试
 	vector<int> iv{ 10, 7, 8, 15, 5, 6, 11, 13, 12 };
 	RBTree<int> rb(iv);
 	rb.InOrder(); cout << endl;
-	RBTree<int>::iterator it= rb.end();
+	rb.Remove(5);
+	rb.InOrder(); cout << endl;
+	rb.Remove(15);
+	rb.InOrder(); cout << endl;
+	rb.Remove(8);
+	rb.InOrder(); cout << endl;
+	rb.Remove(11);
+	rb.InOrder(); cout << endl;
+	rb.Remove(13);
+	rb.InOrder(); cout << endl;
+	rb.Remove(7);
+	rb.InOrder(); cout << endl;
+	rb.Remove(12);
+	rb.InOrder(); cout << endl;
+	rb.Remove(10);
+	rb.InOrder(); cout << endl;
+	rb.Remove(6);
+	rb.InOrder(); cout << endl;
+}
+void TestIterator() {//迭代器功能测试
+	vector<int> iv{ 10, 7, 8, 15, 5, 6, 11, 13, 12 };
+	RBTree<int> rb(iv);
+	rb.InOrder(); cout << endl;
+	RBTree<int>::iterator it = rb.end();
 	RBTree<int>::iterator ot = rb.begin();
 	while (ot != rb.end()) {
-		cout << *ot<<" ";
-		++ot;
+		cout << *ot << " ";
+		ot++;
 	}
-	cout << endl; 
+	cout << endl;
 	do {
-		it--;
+		--it;
 		cout << *it << " ";
 	} while (it != rb.begin());
 	cout << endl;
+}
+int main() {
+	TestIterator();
+	//TestRBTree();
 	return 0;
 }
 
