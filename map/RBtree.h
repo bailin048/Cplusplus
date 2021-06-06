@@ -149,10 +149,10 @@ protected:
 		Node* pr = Nil;
 		Node* p = t;
 		while (p != Nil) {
-			if (data.first == KeyofVal()(p->val))
+			if (KeyofVal()(data)== KeyofVal()(p->val))
 				return iterator(Nil, p, start_node, end_node);
 			pr = p;
-			if (data.first > KeyofVal()(p->val))
+			if (KeyofVal()(data) > KeyofVal()(p->val))
 				p = p->right;
 			else
 				p = p->left;
@@ -160,7 +160,7 @@ protected:
 		p = _BuyNode(data);
 		if (pr == Nil)
 			t = p;
-		else if (data.first < KeyofVal()(pr->val))
+		else if (KeyofVal()(data) < KeyofVal()(pr->val))
 			pr->left = p;
 		else
 			pr->right = p;
@@ -169,7 +169,7 @@ protected:
 		//调整平衡
 		Insert_Fixup(t, p);
 		++sz;
-		return Find(data.first);
+		return Find(KeyofVal()(data));
 	}
 	bool Remove(Node*& t, const K& key) {
 		//先找节点
