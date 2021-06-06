@@ -102,7 +102,7 @@ protected:
 			cur = p;
 		}
 	}
-private:
+	public:
 	Node* Nil;
 	Node* cur;
 	Node* strn;
@@ -206,11 +206,15 @@ protected:
 public:
 	iterator begin() { 
 		set_start_node();
-		return iterator(Nil, start_node, start_node, end_node);
+		if(start_node)
+			return iterator(Nil, start_node, start_node, end_node);
+		return iterator(Nil, nullptr, nullptr, nullptr);
 	}
 	iterator end() { 
 		set_end_node();
-		return iterator(Nil, end_node, start_node, end_node);
+		if(end_node->parent)
+			return iterator(Nil, end_node, start_node, end_node);
+		return iterator(Nil, nullptr, nullptr, nullptr);
 	}
 	void set_start_node() { start_node = Min(); }
 	void set_end_node() { end_node->parent = Max(); }
@@ -362,13 +366,13 @@ private:
 		Node* p = root;
 		while (root != Nil && p->left != Nil)
 			p = p->left;
-		return p;
+		return p == Nil ? nullptr : p;
 	}
 	Node* Max() {
 		Node* p = root;
 		while (p != Nil && p->right != Nil)
 			p = p->right;
-		return p;
+		return p == Nil ? nullptr : p;
 	}
 private:
 	Node* Nil;
@@ -405,11 +409,12 @@ void TestIterator() {//迭代器功能测试
 	rb.InOrder(); cout << endl;
 	RBTree<int>::iterator it = rb.end();
 	RBTree<int>::iterator ot = rb.begin();
+	cout << "测试正向迭代" << endl;
 	while (ot != rb.end()) {
 		cout << *ot << " ";
 		ot++;
 	}
-	cout << endl;
+	cout << endl << "测试反向迭代" << endl;
 	do {
 		--it;
 		cout << *it << " ";
@@ -417,8 +422,10 @@ void TestIterator() {//迭代器功能测试
 	cout << endl;
 }
 int main() {
+	cout << "测试迭代器" << endl;
 	TestIterator();
-	//TestRBTree();
+	cout << "测试删除" << endl;
+	TestRBTree();
 	return 0;
 }
 
