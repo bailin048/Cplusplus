@@ -20,6 +20,13 @@ namespace BL {
 				_A[_P / _Nb] &= ~((_Ty)1 << _P % _Nb);
 			return (*this);
 		}
+		bitset& flip(){ // 所有比特翻转
+			for (size_t _I = 0; _I <= _Nw; ++_I) {
+				_A[_I] = ~_A[_I];
+			}
+			_Trim();
+			return *this;
+		}
 		size_t size() const { return (_N); }
 		bool test(size_t _P) const{
 			//第_P位是否为1，是则true
@@ -110,7 +117,7 @@ namespace BL {
 
 int main() {
 	BL::bitset<100> bt;
-	bt.set();
-	bt[3] = 1;
+	bt.set(3);
+	bt.flip();
 	return 0;
 }
