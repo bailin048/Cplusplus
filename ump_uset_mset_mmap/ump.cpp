@@ -28,39 +28,7 @@ namespace BL {
 		hashtable _ht;
 	};
 
-	template <class Key, class Value=Key, class HashFcn = MyHash, class ExtractKey = MyExtractKey>
-	class Unordered_set {
-	public:
-		struct SetExtractKey {
-			Key operator()(Key k) { return k; }
-		};
-	public:
-		typedef Value ValTy;
-		typedef HashTable<Key, ValTy, HashFcn, SetExtractKey> hashtable;
-		typedef HashTable_iterator <Key, ValTy, HashFcn, SetExtractKey> iterator;
-	public:
-		Unordered_set() {}
-		~Unordered_set() {}
-		iterator Begin() { return _h.begin(); }
-		iterator End() { return _h.end(); }
-		void Clear() { return _h.Clear(); }
-		bool Insert(const ValTy& v) { return _h.insert_unique(v); }
-		bool Erase(const ValTy& v) { return _h.Erase(v); }
-		bool Empty() { return _h.size() == 0; }
-		void Show() { 
-			iterator it = Begin();
-			while (it != End()) {
-				cout << it.cur->val << " ";
-				++it;
-			}
-			cout << endl;
-		}
-		size_t Size() { return _h.size(); }
-		iterator Find(const ValTy& v) { return _h.Find(v); }
-	private:
-		hashtable _h;
-	};
-	
+	 
 	template <class Key, class Value, class HashFcn = MyHash, class ExtractKey = MyExtractKey>
 	class Multimap {
 	public:
@@ -172,8 +140,3 @@ int main(){
 //	ump.Show();
 //	return 0;
 //}
-
-
-
-
-
