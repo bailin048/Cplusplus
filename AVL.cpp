@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <stack>
+#include <vld.h>
 using namespace std;
 
 template<class Ty>
@@ -33,6 +34,10 @@ public:
 	AVLTree(const vector<Ty>& v) :root(nullptr) {
 		for (auto& e : v)
 			Insert(e);
+	}
+	~AVLTree() {
+		while (root!=nullptr)
+			Remove(root->val);
 	}
 public:
 	bool Insert(const Ty& data) { return Insert(root, data); }
@@ -105,7 +110,7 @@ protected:
 	}
 	bool Remove(Node*& t, const Ty& key) {
 		Node* parent = nullptr;
-		Node* p = t;
+		Node* p = t, * q = nullptr;
 		stack<Node*> st;
 		while (p) {		//先找到节点，存储轨迹
 			if (p->val == key)
@@ -117,11 +122,9 @@ protected:
 			else
 				p = p->left;
 		}
-		if (!p)//删除目标不存在
+		if (p==nullptr)//删除目标不存在
 			return false;
 		//删除节点
-		Node* q = nullptr;
-		Node* Nil = new Node(0);//空节点
 		if (p->left && p->right) {//删除目标左右皆有
 			parent = p;
 			q = p->left;
@@ -135,38 +138,35 @@ protected:
 			p = q;//转化为删前驱
 		}
 		//p是删除目标,q是删除目标的子女节点
-		if (p->left) //有左无右
+		if (p->left)
 			q = p->left;
-		else if (p->right)//有右无左
+		else
 			q = p->right;
-		else//无左无右
-			q = Nil;
-		bool IsLeft = false;//左孩子标志
-		if (!parent)//删除目标是整棵AVL的根节点
-			t = q == Nil ? nullptr : q;
+		bool Isleft = false;
+		if (parent==nullptr)//删除目标是整棵AVL的根节点
+			t = q;
 		else {
 			//断开p节点，链接它的子女q
-			if (parent->left == p) {//删除目标是左孩子
-				parent->left = q == Nil ? nullptr : q;
-				IsLeft = true;
+			if (parent->left == p) { //删除目标是左孩子
+				parent->left = q;
+				Isleft = true;
 			}
 			else//删除目标是右孩子
-				parent->right = q == Nil ? nullptr : q;
+				parent->right = q;
 		}
 		//调整平衡
+		bool isbanlanced = false;
 		while (!st.empty()) {
 			parent = st.top();
 			st.pop();
-			if (q == parent->left || IsLeft)
+			if(Isleft)
 				++parent->bf;
 			else
 				--parent->bf;
-			if (abs(parent->bf) == 1)//平衡
+			if (parent->bf == 1 || parent->bf == -1)//平衡
 				break;
-			if (!parent->bf) {//向上回溯调整
+			if (0 == parent->bf) //向上回溯调整
 				q = parent;
-				continue;
-			}
 			else {//parent失衡
 				if (parent->bf > 0)//令q指向较高的树
 					q = parent->right;
@@ -183,33 +183,36 @@ protected:
 						parent->bf = -1;
 						parent->left->bf = 1;
 					}
+					isbanlanced = true;
 				}
-				else if (parent->bf < 0){
-					if (q->bf < 0)  //   /
-						RotateR(parent);
-					else           //   <
-						RotateLR(parent);
+				else {
+					if (parent->bf < 0) {
+						if (q->bf < 0)  //   /
+							RotateR(parent);
+						else           //   <
+							RotateLR(parent);
+					}
+					else {
+						if (q->bf > 0)  //   \ 
+							RotateL(parent);
+						else           //   >
+							RotateRL(parent);
+					}
 				}
-				else if (parent->bf > 0){
-					if (q->bf > 0)  //   \ 
-						RotateL(parent);
-					else           //   >
-						RotateRL(parent);
+				//重新链接
+				if (st.empty())
+					t = parent;
+				else {
+					q = st.top();
+					if (parent->val < q->val)
+						q->left = parent;
+					else
+						q->right = parent;
 				}
+				if (isbanlanced)
+					break;
 			}
-			//重新链接
-			if (st.empty())
-				t = parent;
-			else{
-				q = st.top();
-				if (parent->val < q->val)
-					q->left = parent;
-				else
-					q->right = parent;
-			}
-			q = parent;//向上回溯
 		}
-		delete Nil;
 		delete p;
 		return true;
 	}
@@ -280,32 +283,17 @@ private:
 private:
 	Node* root;
 };
-
 int main() {
-	vector<int> iv{ 16, 3, 7, 11, 9, 26, 18, 14, 15 };
+	vector<int> iv{ 16, 3, 7 , 11, 9, 26, 18, 14, 15 };
 	AVLTree<int> avl(iv);
-	avl.InOrder();
-	cout << endl;
-
-	avl.Remove(11);
-	avl.InOrder();	cout << endl;
-	
 	avl.Remove(7);
-	avl.InOrder();	cout << endl;
 	avl.Remove(16);
-	avl.InOrder();	cout << endl;
-	avl.Remove(15);
-	avl.InOrder();	cout << endl;
 	avl.Remove(3);
-	avl.InOrder();	cout << endl;
+	avl.Remove(15);
+	avl.Remove(3);
 	avl.Remove(18);
-	avl.InOrder();	cout << endl;
 	avl.Remove(14);
-	avl.InOrder();	cout << endl;
 	avl.Remove(26);
-	avl.InOrder();	cout << endl;
 	avl.Remove(9);
-	avl.InOrder();	cout << endl;
 	return 0;
 }
-
